@@ -364,6 +364,7 @@ class QMLEngine {
 
   loadImport(entry, currentFileDir, importContextId) {
     let name = entry[1];
+    let alias = entry[3];
 
     // is it url to remote resource
     const nameIsUrl = name.indexOf("//") === 0 || name.indexOf("://") >= 0;
@@ -419,12 +420,12 @@ class QMLEngine {
       * "addComponentImportPath" for these sorts of directories. */
     if (!content || content === "noqmldir") {
       if (nameIsDir) {
-        if (entry[3]) {
+        if (alias) {
           /* Use entry[1] directly, as we don't want to include the
             * basePath, otherwise it gets prepended twice in
             * createComponent. */
           this.addComponentImportPath(importContextId,
-            `${entry[1]}/`, entry[3]);
+            `${entry[1]}/`, alias);
         } else {
           this.addComponentImportPath(importContextId, `${name}/`);
         }
@@ -436,8 +437,14 @@ class QMLEngine {
 
     // copy founded externals to global var
     // TODO actually we have to copy it to current component
+    let prefix;
+    if (alias) {
+      prefix = `${alias}.`;
+    } else {
+      prefix = '';
+    }
     for (const attrname in content.externals) {
-      this.qmldirs[attrname] = content.externals[attrname];
+      this.qmldirs[prefix + attrname] = content.externals[attrname];
     }
 
     // keep already loaded qmldir files

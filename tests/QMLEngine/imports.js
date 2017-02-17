@@ -68,6 +68,10 @@ describe("QMLEngine.imports", function() {
     var qml = load("From/SiblingDir", this.div);
     expect(qml.text).toBe("I'm simple");
   });
+  it("can import from sibling directory with alias qualifier", function() {
+    var qml = load("From/SiblingDirWithAlias", this.div);
+    expect(qml.text).toBe("I'm simple");
+  });
   it("can import from parent directory", function() {
     var qml = load("From/ParentDir", this.div);
     expect(qml.value).toBe(5);
